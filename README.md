@@ -26,3 +26,6 @@
 - DB : Preference(설정 등 경량데이터), Room
 - 네트워크 : retrofit
 - 이미지 처리: glide
+
+## SW Architecture
+![image](https://user-images.githubusercontent.com/47879772/120209735-fb653280-c269-11eb-919b-687875a4d8e7.png)
