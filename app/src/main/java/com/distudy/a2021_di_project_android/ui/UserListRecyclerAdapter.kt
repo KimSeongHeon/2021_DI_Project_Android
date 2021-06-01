@@ -14,8 +14,8 @@ class UserListRecyclerAdapter(private val context: Context, private val userList
 
     inner class ViewHolder(private val binding: ItemUserSimpleListBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(userInfo: UserProfileInfo?) {
-            Glide.with(context).load(userInfo?.avatar_url).override(50).into(binding.userImage)
-            binding.userName.text = userInfo?.node_id
+            Glide.with(context).load(userInfo?.avatar_url).override(100).into(binding.userImage)
+            binding.userName.text = userInfo?.login
         }
     }
 
