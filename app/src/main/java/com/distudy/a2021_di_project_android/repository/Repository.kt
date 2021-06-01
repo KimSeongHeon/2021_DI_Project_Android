@@ -1,13 +1,10 @@
 package com.distudy.a2021_di_project_android.repository
 
 import com.distudy.a2021_di_project_android.api.RetrofitClient
-import com.distudy.a2021_di_project_android.data.UserProfileResponse
-import com.truthbean.logger.LoggerFactory
+import com.distudy.a2021_di_project_android.data.UserProfileInfo
 import io.reactivex.rxjava3.core.Single
 
 class Repository {
-    private val log = LoggerFactory.getLogger(TAG)
-
     companion object {
         private const val TAG = "Repository"
 
@@ -22,7 +19,7 @@ class Repository {
         }
     }
 
-    fun loadAllUserList(since: Int, per_page: Int): Single<UserProfileResponse> {
+    fun loadAllUserList(since: Int, per_page: Int): Single<List<UserProfileInfo>> {
         return RetrofitClient.userService.getAllUserList(since = since, per_page = per_page)
     }
 }

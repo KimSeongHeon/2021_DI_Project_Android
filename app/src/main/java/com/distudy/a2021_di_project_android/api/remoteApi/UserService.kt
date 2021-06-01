@@ -1,6 +1,6 @@
 package com.distudy.a2021_di_project_android.api.remoteApi
 
-import com.distudy.a2021_di_project_android.data.UserProfileResponse
+import com.distudy.a2021_di_project_android.data.UserProfileInfo
 import io.reactivex.rxjava3.core.Single
 import retrofit2.Call
 import retrofit2.http.GET
@@ -14,7 +14,7 @@ interface UserService {
         @Header("accept") accept: String = "application/vnd.github.v3+json",
         @Query("since") since: Int,
         @Query("per_page") per_page: Int
-    ): Single<UserProfileResponse>
+    ): Single<List<UserProfileInfo>>
 
     @GET("/users/{username}")
     fun getDetailUserInfo(
