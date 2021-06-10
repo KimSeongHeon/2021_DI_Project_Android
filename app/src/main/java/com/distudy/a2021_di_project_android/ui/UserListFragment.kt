@@ -6,14 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.distudy.a2021_di_project_android.MyApplication
+import com.distudy.a2021_di_project_android.common.Fragment.BaseFragment
 import com.distudy.a2021_di_project_android.data.UserProfileInfo
 import com.distudy.a2021_di_project_android.databinding.FragmentUserListBinding
 import com.distudy.a2021_di_project_android.viewModel.UserListViewModel
+import javax.inject.Inject
 
-class UserListFragment : Fragment() {
+class UserListFragment : BaseFragment() {
     private var _binding: FragmentUserListBinding? = null
     private val binding get() = _binding!!
     private var userList = arrayListOf<UserProfileInfo>()
@@ -21,11 +23,12 @@ class UserListFragment : Fragment() {
         UserListRecyclerAdapter(requireContext(), userList)
     }
 
-    private val viewModel: UserListViewModel by activityViewModels()
+    @Inject lateinit var viewModel: UserListViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate")
+        injector.inject(this)
         viewModel.loadUserList(0, 0)
     }
 
