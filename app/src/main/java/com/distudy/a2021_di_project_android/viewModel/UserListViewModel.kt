@@ -16,7 +16,6 @@ class UserListViewModel @Inject constructor(private val repository: Repository) 
 
     fun loadUserList(since: Int, per_page: Int) {
         addDisposable(repository.loadAllUserList(since, per_page).observeOn(Schedulers.io()).subscribe({ userList ->
-            Log.d(TAG,userList.toString())
             _userList.postValue(userList)
         }, { t: Throwable? ->
             Log.e(TAG, t?.message.toString())

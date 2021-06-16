@@ -7,15 +7,8 @@ import dagger.Provides
 
 @Module
 class ActivityModule(
-     val activity: Activity,
-     val appComponent: AppComponent
+     val activity: Activity
 ) {
-    @Provides
-    fun userService() = appComponent.userService()
-
-    @Provides
-    fun application() = appComponent.application()
-
     @Provides
     fun activity() = activity
 }
