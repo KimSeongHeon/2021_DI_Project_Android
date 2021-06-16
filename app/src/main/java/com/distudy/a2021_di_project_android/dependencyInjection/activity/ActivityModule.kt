@@ -6,9 +6,5 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class ActivityModule(
-     val activity: Activity
-) {
-    @Provides
-    fun activity() = activity
+object ActivityModule {
 }
