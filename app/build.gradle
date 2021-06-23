@@ -4,12 +4,26 @@ plugins {
     id 'kotlin-kapt'
 }
 
+def apikeyPropertiesFile = rootProject.file("apikey.properties")
+def apikeyProperties = new Properties()
+apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
+
+android {
+
+    defaultConfig {
+
+        // should correspond to key/value pairs inside the file
+        buildConfigField("String", "OAUTH_ID", apikeyProperties['OAUTH_ID'])
+        buildConfigField("String", "OAUTH_SECRET", apikeyProperties['OAUTH_SECRET'])
+    }
+}
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.distudy.a2021_di_project_android"
+        applicationId "com.distudy.diproject"
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
