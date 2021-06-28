@@ -33,9 +33,10 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        injector.inject(this)
+
         bindActivityLauncher()
         oAuthViewModel = ViewModelProvider(this, myViewModelFactory).get(OAuthViewModel::class.java)
-        injector.inject(this)
         supportFragmentManager.beginTransaction().add(R.id.frame_content, UserListFragment()).commit()
     }
 
@@ -64,18 +65,29 @@ class MainActivity : BaseActivity() {
     private fun bindActivityLauncher() {
         requestActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             val uri = it.data?.data
-            Log.d("resultCOde", it.resultCode.toString())
             uri?.let {
                 uri.getQueryParameter(CODE_KEY)?.let { code ->
-                    Log.d("uri", "getQueryParameter")
                     oAuthViewModel.getAccessToken(code)
                 }
             }
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        val uri = intent.data
+        uri?.let {
+            Log.d("onResume",uri.toString())
+            uri.getQueryParameter(CODE_KEY)?.let { code ->
+                Log.d("onResume",code)
+                oAuthViewModel.getAccessToken(code)
+            }
+        }
+    }
+
     companion object {
-        private const val OAUTH_PATH = "authorize"
+        private const val OAUTH_PATH = "/login/oauth/authorize"
         private const val QUERY_START = "?"
         private const val EQUAL = "="
         private const val CLIENT_ID_KEY = "client_id"

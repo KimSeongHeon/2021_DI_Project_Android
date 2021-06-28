@@ -4,6 +4,8 @@ import android.app.Application
 import com.distudy.diproject.api.remoteApi.OAuthService
 import com.distudy.diproject.api.remoteApi.UserService
 import com.distudy.diproject.common.URLProvider
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
@@ -16,17 +18,17 @@ class AppModule(private val application: Application) {
     @Named(BASE_RETROFIT)
     @Provides
     @AppScope
-    fun baseRetrofit(urlProvider: URLProvider): Retrofit {
+    fun baseRetrofit(urlProvider: URLProvider, gson: Gson): Retrofit {
         return Retrofit.Builder().addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create()).baseUrl(urlProvider.getBaseUrl()).build()
+            .addConverterFactory(GsonConverterFactory.create(gson)).baseUrl(urlProvider.getBaseUrl()).build()
     }
 
     @Named(OAUTH_RETROFIT)
     @Provides
     @AppScope
-    fun oAuthRetrofit(urlProvider: URLProvider): Retrofit {
+    fun oAuthRetrofit(urlProvider: URLProvider, gson: Gson): Retrofit {
         return Retrofit.Builder().addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create()).baseUrl(urlProvider.getOAuthUrl()).build()
+            .addConverterFactory(GsonConverterFactory.create(gson)).baseUrl(urlProvider.getOAuthUrl()).build()
     }
 
     @Provides
@@ -35,6 +37,9 @@ class AppModule(private val application: Application) {
     @AppScope
     @Provides
     fun urlProvider() = URLProvider()
+
+    @Provides
+    fun gson() = GsonBuilder().setLenient().create()
 
     @Provides
     @AppScope

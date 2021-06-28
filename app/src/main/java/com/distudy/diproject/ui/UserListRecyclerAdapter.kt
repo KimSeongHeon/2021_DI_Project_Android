@@ -20,7 +20,6 @@ class UserListRecyclerAdapter(private val context: Context, private val userList
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        Log.d(TAG,"onCreateViewHolder")
         val layoutInflater = LayoutInflater.from(context)
         val binding = ItemUserSimpleListBinding.inflate(layoutInflater, parent, false)
         return ViewHolder(binding)
