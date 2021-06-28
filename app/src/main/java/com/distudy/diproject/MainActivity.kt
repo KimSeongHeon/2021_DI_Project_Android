@@ -58,7 +58,6 @@ class MainActivity : BaseActivity() {
     private fun createIntent(): Intent {
         val uriString =
             urlProvider.getOAuthUrl() + OAUTH_PATH + QUERY_START + CLIENT_ID_KEY + EQUAL + "${SecureInfoUtil.OAuth_ID}" + "&" + REDIRECT_KEY + EQUAL + SCHEME
-        Log.d("uriString", uriString)
         return Intent(Intent.ACTION_VIEW, Uri.parse(uriString))
     }
 
@@ -78,16 +77,14 @@ class MainActivity : BaseActivity() {
 
         val uri = intent.data
         uri?.let {
-            Log.d("onResume",uri.toString())
             uri.getQueryParameter(CODE_KEY)?.let { code ->
-                Log.d("onResume",code)
                 oAuthViewModel.getAccessToken(code)
             }
         }
     }
 
     companion object {
-        private const val OAUTH_PATH = "/login/oauth/authorize"
+        private const val OAUTH_PATH = "authorize"
         private const val QUERY_START = "?"
         private const val EQUAL = "="
         private const val CLIENT_ID_KEY = "client_id"

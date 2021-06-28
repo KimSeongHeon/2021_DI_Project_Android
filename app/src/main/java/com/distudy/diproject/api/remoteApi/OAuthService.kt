@@ -8,7 +8,7 @@ import retrofit2.http.*
 interface OAuthService {
     @Headers("Accept: application/json")
     @FormUrlEncoded
-    @POST("/login/oauth/access_token")
+    @POST("access_token")
     fun getAccessToken(
         @Field("client_id") clientId: String,
         @Field("client_secret") clientSecret: String,
