@@ -8,19 +8,25 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.ViewModelProvider
 import com.distudy.diproject.common.Activity.BaseActivity
 import com.distudy.diproject.common.URLProvider
 import com.distudy.diproject.ui.UserListFragment
 import com.distudy.diproject.utils.SecureInfoUtil
 import com.distudy.diproject.viewModel.OAuthViewModel
+import com.distudy.diproject.viewModel.UserListViewModel
+import com.distudy.diproject.viewModel.ViewModelFactory
 import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
     @Inject
-    lateinit var viewModel: OAuthViewModel
+    lateinit var urlProvider: URLProvider
 
     @Inject
-    lateinit var urlProvider: URLProvider
+    lateinit var myViewModelFactory: ViewModelFactory
+
+    private lateinit var oAuthViewModel: OAuthViewModel
+    private lateinit var userListViewModel: UserListViewModel
 
     private lateinit var requestActivity: ActivityResultLauncher<Intent>
 
@@ -28,6 +34,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         bindActivityLauncher()
+        oAuthViewModel = ViewModelProvider(this, myViewModelFactory).get(OAuthViewModel::class.java)
         injector.inject(this)
         supportFragmentManager.beginTransaction().add(R.id.frame_content, UserListFragment()).commit()
     }
@@ -49,19 +56,19 @@ class MainActivity : BaseActivity() {
 
     private fun createIntent(): Intent {
         val uriString =
-            urlProvider.getOAuthUrl() + OAUTH_PATH + QUERY_START + CLIENT_ID_KEY + EQUAL + "${SecureInfoUtil.OAuth_ID}"
-        Log.d("uriString",uriString)
+            urlProvider.getOAuthUrl() + OAUTH_PATH + QUERY_START + CLIENT_ID_KEY + EQUAL + "${SecureInfoUtil.OAuth_ID}" + "&" + REDIRECT_KEY + EQUAL + SCHEME
+        Log.d("uriString", uriString)
         return Intent(Intent.ACTION_VIEW, Uri.parse(uriString))
     }
 
     private fun bindActivityLauncher() {
         requestActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             val uri = it.data?.data
-            Log.d("resultCOde",it.resultCode.toString())
+            Log.d("resultCOde", it.resultCode.toString())
             uri?.let {
                 uri.getQueryParameter(CODE_KEY)?.let { code ->
                     Log.d("uri", "getQueryParameter")
-                    viewModel.getAccessToken(code)
+                    oAuthViewModel.getAccessToken(code)
                 }
             }
         }

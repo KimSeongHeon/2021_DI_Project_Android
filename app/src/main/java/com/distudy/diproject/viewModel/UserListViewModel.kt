@@ -19,7 +19,7 @@ class UserListViewModel @Inject constructor(private val repository: Repository) 
         get() = _userList
 
     fun loadUserList(since: Int, per_page: Int) {
-        val token = accessTokenController.getToken()
+        val token = accessTokenController.currentToken
         addDisposable(
             repository.loadAllUserList(token, since, per_page).observeOn(Schedulers.io()).subscribe({ userList ->
                 _userList.postValue(userList)

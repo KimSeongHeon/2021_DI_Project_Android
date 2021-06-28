@@ -6,11 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.distudy.diproject.common.Fragment.BaseFragment
 import com.distudy.diproject.data.UserProfileInfo
 import com.distudy.diproject.databinding.FragmentUserListBinding
+import com.distudy.diproject.viewModel.OAuthViewModel
 import com.distudy.diproject.viewModel.UserListViewModel
+import com.distudy.diproject.viewModel.ViewModelFactory
 import javax.inject.Inject
 
 class UserListFragment : BaseFragment() {
@@ -21,13 +24,17 @@ class UserListFragment : BaseFragment() {
         UserListRecyclerAdapter(requireContext(), userList)
     }
 
-    @Inject lateinit var viewModel: UserListViewModel
+    @Inject
+    lateinit var myViewModelFactory: ViewModelFactory
+
+    private lateinit var userListViewModel: UserListViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate")
         injector.inject(this)
-        viewModel.loadUserList(0, 0)
+        userListViewModel = ViewModelProvider(this, myViewModelFactory).get(UserListViewModel::class.java)
+        userListViewModel.loadUserList(0, 0)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -39,7 +46,7 @@ class UserListFragment : BaseFragment() {
     }
 
     private fun initViewModel() {
-        viewModel.userList.observe(viewLifecycleOwner, Observer<List<UserProfileInfo>> {
+        userListViewModel.userList.observe(viewLifecycleOwner, Observer<List<UserProfileInfo>> {
             userList.addAll(it)
             adapter.notifyDataSetChanged()
         })

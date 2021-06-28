@@ -6,15 +6,5 @@ import javax.inject.Inject
 
 @AppScope
 class AccessTokenController @Inject constructor() {
-    private var currentToken: AccessToken? = null
-
-    fun setNewToken(token: AccessToken) {
-        this.currentToken = token
-    }
-
-    fun getToken(): AccessToken? {
-        return currentToken
-    }
-
-
+    var currentToken: AccessToken? = null
 }
