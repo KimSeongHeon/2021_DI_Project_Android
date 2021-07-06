@@ -21,11 +21,13 @@ class UserListViewModel @Inject constructor(private val repository: Repository) 
     fun loadUserList(since: Int, per_page: Int) {
         val token = accessTokenController.currentToken
         addDisposable(
-            repository.loadAllUserList(token, since, per_page).observeOn(Schedulers.io()).subscribe({ userList ->
-                _userList.postValue(userList)
-            }, { t: Throwable? ->
-                Log.e(TAG, t?.message.toString())
-            })
+            repository.loadAllUserList(token, since, per_page)
+                .observeOn(Schedulers.io())
+                .subscribe({ userList ->
+                    _userList.postValue(userList)
+                }, { t: Throwable? ->
+                    Log.e(TAG, t?.message.toString())
+                })
         )
     }
 
