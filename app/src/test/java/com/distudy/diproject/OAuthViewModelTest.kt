@@ -29,11 +29,6 @@ class OAuthViewModelTest {
     //모의 객체 : 실제 객체를 모방한 객체, 동일한 인터페이스를 가지지만 실제로 속은 비어 있음(Repository를 Mock해야함)
     //stub : 모의 객체의 실체를 임의로 정하는 행위 -> 모의 객체가 있다면 함수의 반환 값은? -> 이 반환값을 직접 적어주는 것을 stub이라고 함
     //https://greedy0110.tistory.com/56
-
-    //Mockito의 rule을 따르면서 initMocks 삭제
-    @get:Rule
-    var rule: MockitoRule = MockitoJUnit.rule()
-
     @JvmField
     @Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -41,7 +36,7 @@ class OAuthViewModelTest {
     //viewModel의 외부 객체인 repository를 @mock을 통해 mocking
     @Mock lateinit var repository: Repository
 
-    @InjectMocks lateinit var viewModel: OAuthViewModel
+    lateinit var viewModel: OAuthViewModel
 
     private val fakeCode = ""
     private val fakeAccessToken = AccessToken("", "", "")

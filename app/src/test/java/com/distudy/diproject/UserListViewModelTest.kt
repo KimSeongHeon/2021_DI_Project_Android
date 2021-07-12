@@ -23,14 +23,11 @@ import org.mockito.junit.MockitoRule
 
 @RunWith(MockitoJUnitRunner::class)
 class UserListViewModelTest {
-    @get:Rule
-    var rule: MockitoRule = MockitoJUnit.rule()
-
     @JvmField
     @Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    @InjectMocks lateinit var viewModel: UserListViewModel
+    lateinit var viewModel: UserListViewModel
     @Mock lateinit var accessTokenController: AccessTokenController
     @Mock lateinit var repository: Repository
 
