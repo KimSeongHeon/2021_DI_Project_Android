@@ -1,6 +1,7 @@
 package com.distudy.diproject.viewModel
 
-import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.distudy.diproject.common.AccessTokenController
 import com.distudy.diproject.common.BaseViewModel
 import com.distudy.diproject.data.AccessToken
@@ -11,6 +12,10 @@ import javax.inject.Inject
 class OAuthViewModel @Inject constructor(private val repository: Repository) : BaseViewModel() {
     @Inject
     lateinit var accessTokenHelper: AccessTokenController
+
+    private var _tokenLiveData = MutableLiveData<String>()
+    val tokenLiveData: LiveData<String>
+        get() = _tokenLiveData
 
     fun getAccessToken(code: String) {
         addDisposable(
@@ -27,5 +32,9 @@ class OAuthViewModel @Inject constructor(private val repository: Repository) : B
 
     fun saveCurrentToken(token: AccessToken) {
         accessTokenHelper.currentToken = token
+    }
+
+    fun setTokenData(token: String) {
+        _tokenLiveData.postValue(token)
     }
 }

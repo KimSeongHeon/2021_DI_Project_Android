@@ -53,6 +53,8 @@ android {
 dependencies {
     //Dagger2
     api "com.google.dagger:dagger:$dagger_version"
+    implementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation 'androidx.test.espresso:espresso-intents:3.4.0'
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     //Rxjava
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'

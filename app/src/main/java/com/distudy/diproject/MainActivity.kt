@@ -3,14 +3,15 @@ package com.distudy.diproject
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.distudy.diproject.common.Activity.BaseActivity
 import com.distudy.diproject.common.URLProvider
+import com.distudy.diproject.databinding.ActivityMainBinding
 import com.distudy.diproject.ui.UserListFragment
 import com.distudy.diproject.utils.SecureInfoUtil
 import com.distudy.diproject.viewModel.OAuthViewModel
@@ -25,6 +26,9 @@ class MainActivity : BaseActivity() {
     @Inject
     lateinit var myViewModelFactory: ViewModelFactory
 
+    private var _binding: ActivityMainBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var oAuthViewModel: OAuthViewModel
     private lateinit var userListViewModel: UserListViewModel
 
@@ -35,9 +39,11 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
         injector.inject(this)
 
+        _binding = ActivityMainBinding.inflate(layoutInflater)
         bindActivityLauncher()
         oAuthViewModel = ViewModelProvider(this, myViewModelFactory).get(OAuthViewModel::class.java)
         supportFragmentManager.beginTransaction().add(R.id.frame_content, UserListFragment()).commit()
+        initViewModel()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -53,6 +59,12 @@ class MainActivity : BaseActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun initViewModel() {
+        oAuthViewModel.tokenLiveData.observe(this, Observer { token ->
+            binding.tokenTestText.text = token
+        })
     }
 
     private fun createIntent(): Intent {
