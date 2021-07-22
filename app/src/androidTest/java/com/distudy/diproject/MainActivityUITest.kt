@@ -4,10 +4,8 @@ import android.app.Activity
 import android.app.Instrumentation
 import android.content.Intent
 import android.net.Uri
-import android.os.IBinder
-import android.view.WindowManager
+import android.os.SystemClock
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.Root
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents.intended
@@ -19,16 +17,24 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import com.distudy.diproject.CustomMatchers.Companion.withItemCount
+import com.distudy.diproject.CustomMatchers.Companion.withTextViewContent
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
 import org.hamcrest.CoreMatchers.allOf
-import org.hamcrest.TypeSafeMatcher
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.io.InputStreamReader
 
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
+//@LargeTest 주석은 필수는 아니지만 UI 테스트에서 권장됩니다. 테스트 기간이 1 초 이상일 수 있음을 나타냅니다.
 class MainActivityUITest {
     //https://developer.android.com/training/testing/espresso/intents?hl=ko
     //Activity Scenario
@@ -40,9 +46,32 @@ class MainActivityUITest {
 
     lateinit var fakeUri: Uri
 
+    private val mockWebServer = MockWebServer()
+
+
     @Before
     fun setup() {
         fakeUri = Uri.parse("myScheme://info?code=%2fsomething")
+        mockWebServer.start(8080)
+    }
+
+    @After
+    @Throws(IOException::class)
+    fun teardown() {
+        mockWebServer.shutdown()
+    }
+
+    @Test
+    fun recyclerView_onLaunched() {
+        onView(withId(R.id.user_list_recyclerview)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun recyclerView_shouldShowElements() {
+        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(getStringFromFile("sample.json")))
+        SystemClock.sleep(2000)
+        onView(withId(R.id.user_list_recyclerview)).check(matches(withItemCount(30)))
+        onView(withId(R.id.user_list_recyclerview)).check(matches(withTextViewContent("mojombo")))
     }
 
     @Test
@@ -72,28 +101,29 @@ class MainActivityUITest {
         onView(withId(R.id.token_test_text)).check(matches(withText("")))
     }
 
-    /**
-     * 분석 필요. 배껴
-     */
-    open class ToastMatcher(private val message: String) : TypeSafeMatcher<Root?>() {
-        override fun matchesSafely(root: Root?): Boolean {
-            root ?: return false
-            val type: Int = root.windowLayoutParams.get().type
-            if (type == WindowManager.LayoutParams.TYPE_TOAST) {
-                val windowToken: IBinder = root.decorView.windowToken
-                val appToken: IBinder = root.decorView.applicationWindowToken
-                if (windowToken === appToken) {
-                    // means this window isn't contained by any other windows.
-                    return true
-                }
-            }
-            return false
-        }
-
-        override fun describeTo(description: org.hamcrest.Description?) {
-            description?.appendText(message)
-        }
-
+    private fun getJsonContent(fileName: String): String {
+        return InputStreamReader(
+            this.javaClass.classLoader?.getResourceAsStream(fileName)
+        ).use { it.readText() }
     }
+
+    internal fun getStringFromFile(filePath: String, debug: Boolean = false): String {
+        val classLoader = this::class.java.classLoader
+        if (classLoader != null) {
+            try {
+                val inputString = classLoader.getResourceAsStream(filePath).bufferedReader().use { it.readText() }
+                if (debug) println("Output from inputfile is: $inputString")
+                return inputString
+            } catch (e: FileNotFoundException) {
+                println("Could not find the specified file: $filePath")
+                throw e
+            }
+        } else {
+            throw IllegalStateException(
+                """Classloader is null. Can't open an inputstream for the specified file: $filePath without it."""
+            )
+        }
+    }
+
 
 }
